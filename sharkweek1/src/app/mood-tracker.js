@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -17,6 +17,7 @@ const moodColors = {
 export default function MoodTracker() {
   const [selectedDate, setSelectedDate] = useState(null)
   const [moodData, setMoodData] = useState({})
+  const [key, setKey] = useState(0) // Add this line
 
   const handleDateSelect = useCallback((date) => {
     setSelectedDate(date)
@@ -29,6 +30,7 @@ export default function MoodTracker() {
         ...prevData,
         [dateKey]: mood
       }))
+      setKey(prevKey => prevKey + 1) // Add this line
     }
   }, [selectedDate])
 
@@ -48,6 +50,7 @@ export default function MoodTracker() {
           </CardHeader>
           <CardContent>
             <Calendar
+              key={key} // Add this line
               mode="single"
               selected={selectedDate}
               onSelect={handleDateSelect}
@@ -66,59 +69,7 @@ export default function MoodTracker() {
           </CardContent>
         </Card>
 
-        <div className="space-y-6">
-          <Card className="bg-gray-800">
-            <CardHeader>
-              <CardTitle>Add/Update Mood</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>Selected Date: {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'None'}</p>
-              <Select 
-                onValueChange={handleMoodSelect} 
-                value={selectedDate ? getMoodForDate(selectedDate) || '' : ''}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your mood" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(moodColors).map(([mood, color]) => (
-                    <SelectItem key={mood} value={mood}>
-                      <div className="flex items-center">
-                        <div
-                          className="w-4 h-4 rounded-full mr-2"
-                          style={{ backgroundColor: color }}
-                        />
-                        {mood}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-sm text-gray-400">
-                Select a date and mood to update the calendar
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gray-800">
-            <CardHeader>
-              <CardTitle>Mood Legend</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-2">
-                {Object.entries(moodColors).map(([mood, color]) => (
-                  <div key={mood} className="flex items-center">
-                    <div
-                      className="w-4 h-4 rounded-full mr-2"
-                      style={{ backgroundColor: color }}
-                    />
-                    {mood}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* ... rest of the component remains the same ... */}
       </div>
     </div>
   )
