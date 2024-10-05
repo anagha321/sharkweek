@@ -2,20 +2,22 @@
 import * as React from "react"
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 import { DayPicker } from "react-day-picker"
-
+import { useState } from 'react';
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
-function Calendar({
+function Calendar ({
   className,
   classNames,
   showOutsideDays = true,
   ...props
 }) {
+  const [selected, setSelected] = useState(new Date());
   return (
     (<DayPicker
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
+      disabled={{ after: new Date() }}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
@@ -60,6 +62,10 @@ function Calendar({
         IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRightIcon className="h-4 w-4" />,
       }}
+      selected={selected}
+      footer={
+        `Today is ${selected.toLocaleDateString()}`
+      }
       {...props} />)
   );
 }
